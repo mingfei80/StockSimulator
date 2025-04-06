@@ -1,0 +1,6 @@
+@StockSimulator_HostAddress = http://localhost:5043
+
+GET {{StockSimulator_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
