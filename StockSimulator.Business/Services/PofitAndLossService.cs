@@ -55,8 +55,8 @@ public class ProfitAndLossService: IProfitAndLossService
             var maxDate = trades.Max(t => t.TradeDate);
 
             // example: stockId = 1, TradeDate = 2022-12-13, firstBuyDate = 2022-12-15
-            int backDate2DaysJustInCase = 2;
-            var minTradeFeeDate = trades.Min(t => t.TradeDate.AddDays(-backDate2DaysJustInCase)); 
+            int backDate4DaysJustInCase = 4;
+            var minTradeFeeDate = trades.Min(t => t.TradeDate.AddDays(-backDate4DaysJustInCase)); 
 
 
             // Get Dividends and Trade Fees for the stock within the date range
