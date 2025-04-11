@@ -14,4 +14,5 @@ public interface IRepository<TEntity> where TEntity : class
     Task<TEntity?> FindOneAsync(Expression<Func<TEntity, bool>> predicate, bool asNoTracking = true, Func<IQueryable<TEntity>, IQueryable<TEntity>>? include = null);
     Task<List<TEntity>> GetAllAsync(bool asNoTracking = true, Func<IQueryable<TEntity>, IQueryable<TEntity>>? include = null);
     Task UpdateAsync(TEntity entity);
+    Task UpdateRangeAsync(IEnumerable<TEntity> entities);
 }

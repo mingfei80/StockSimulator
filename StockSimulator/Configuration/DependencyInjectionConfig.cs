@@ -1,6 +1,7 @@
 ﻿using StockSimulator.Business.Services;
 using StockSimulator.Data.Context;
 using StockSimulator.Data.Repositories;
+using StockSimulator.Data.UnitOfWork;
 
 namespace StockSimulator.Configuration;
 
@@ -10,9 +11,17 @@ public static class DependencyInjectionConfig
     {
         service.AddScoped<StockSimulatorDbContext>();
 
-        service.AddScoped<IStockTransactionRepository, StockTransactionRepository>();
+        service.AddScoped<IUnitOfWork, UnitOfWork>();
 
-        service.AddScoped<IStockTransactionService, StockTransactionService>();
+        service.AddScoped<IProfitAndLossRepository, ProfitAndLossRepository>();
+        service.AddScoped<ITradeTransactionRepository, TradeTransactionRepository>();
+        service.AddScoped<IDividendRepository, DividendRepository>();
+        service.AddScoped<ITradeFeeRepository, TradeFeeRepository>();
+
+        service.AddScoped<IProfitAndLossService, ProfitAndLossService>();
+        service.AddScoped<ITradeTransactionService, TradeTransactionService>();
+        service.AddScoped<IDividendService, DividendService>();
+        service.AddScoped<ITradeFeeService, TradeFeeService>();
 
         return service;
     }

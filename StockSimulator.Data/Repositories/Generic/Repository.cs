@@ -65,6 +65,10 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
         _dbContext.Set<TEntity>().Update(entity); await _dbContext.SaveChangesAsync();
     }
 
+    public async Task UpdateRangeAsync(IEnumerable<TEntity> entities)
+    {
+        _dbContext.Set<TEntity>().UpdateRange(entities); await _dbContext.SaveChangesAsync();
+    }
 
     public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate)
     {
