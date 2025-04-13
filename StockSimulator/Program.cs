@@ -29,6 +29,9 @@ namespace StockSimulator
 
             var app = builder.Build();
 
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -42,6 +45,8 @@ namespace StockSimulator
 
 
             app.MapControllers();
+
+            app.MapFallbackToFile("/index.html");
 
             app.Run();
         }
