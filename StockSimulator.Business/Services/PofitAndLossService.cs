@@ -44,6 +44,9 @@ public class ProfitAndLossService: IProfitAndLossService
             if (!trades.Any())
                 throw new InvalidOperationException("No trades found for the given IDs.");
 
+            if (trades.GroupBy(x => x.BuyerId).Count() > 1)
+                throw new InvalidOperationException("All trades must belong to the same buyer.");
+
             if (trades.GroupBy(x => x.StockId).Count() > 1)
                 throw new InvalidOperationException("All trades must belong to the same stock.");
 
@@ -51,17 +54,19 @@ public class ProfitAndLossService: IProfitAndLossService
                 throw new InvalidOperationException("The total quantity of sold trades must equal the total quantity of bought trades.");
 
             var stockId = trades.First().StockId;
-            var minDate = trades.Min(t => t.TradeDate);
-            var maxDate = trades.Max(t => t.TradeDate);
 
-            // example: stockId = 1, TradeDate = 2022-12-13, firstBuyDate = 2022-12-15
-            int backDate4DaysJustInCase = 4;
-            var minTradeFeeDate = trades.Min(t => t.TradeDate.AddDays(-backDate4DaysJustInCase)); 
+            int backDateDividend5DaysJustInCase = 5;
+            int addDateTradeFee10DaysJustInCase = 10;
 
+            var minDividendDate = trades.Min(t => t.TradeDate);
+            var maxDividendDate = trades.Max(t => t.TradeDate.AddDays(addDateTradeFee10DaysJustInCase));
+
+            var minTradeFeeDate = trades.Min(t => t.TradeDate.AddDays(-backDateDividend5DaysJustInCase)); // eg: stockId = 1, TradeDate = 2022-12-13, firstBuyDate = 2022-12-15
+            var maxTradeFeeDate = trades.Max(t => t.TradeDate);
 
             // Get Dividends and Trade Fees for the stock within the date range
-            var dividends = await _dividendRepository.GetByStockAndDateRangeAsync(stockId, minDate, maxDate);
-            var tradeFees = await _tradeFeeRepository.GetByStockAndDateRangeAsync(stockId, minTradeFeeDate, maxDate);
+            var dividends = await _dividendRepository.GetByStockAndDateRangeAsync(stockId, minDividendDate, maxDividendDate);
+            var tradeFees = await _tradeFeeRepository.GetByStockAndDateRangeAsync(stockId, minTradeFeeDate, maxTradeFeeDate);
 
             // Calculate Profit and Loss
             ProfitAndLossCalculationResult plDto = ProfitAndLossCalculator.Calculate(trades, dividends, tradeFees);

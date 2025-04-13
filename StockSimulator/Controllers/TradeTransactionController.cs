@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using StockSimulator.Business.Logic;
 using StockSimulator.Business.Services;
 using StockSimulator.Dtos;
+using StockSimulator.Dtos.TradeTransaction;
 
 namespace StockSimulator.Controllers;
 
@@ -29,13 +30,26 @@ public class TradeTransactionController : ControllerBase
         return Ok(new { StockTransactions = stocksDTO });
     }
 
-    [HttpGet("get-by-stockIds", Name = "get-by-stockIds")]
-    public async Task<IActionResult> GetTest()
+    /**
+        C:\***StockSimulator\Useful-PrepareMatchedUnassignedStocksForProfitAndLoss.sql
+        SQL above give you better data for
+            PofitAndLossController
+            - Post -
+        {
+            "stockIds": [1, 2, 3],
+            "buyerId": 1,
+            "startingProfitAndLossId": 0 --not important as this is preview only
+        }
+     */
+    [HttpPost("unassigned-matched-stocks/prepare")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> PrepareMatchedUnassignedStocksForProfitAndLoss([FromBody] MatchedStockRequestDto request)
     {
-        int profitAndLossId = 1;
-        List<int> stockIds = new List<int> { 1, 2, 3, 4, 5 };
-        
-        var stocksDTO = _mapper.Map<List<TradeTransactionDto>>(TradeMatcher.MatchAndCalculate(await _tradeTransactionService.GetByIdsAsync(stockIds), profitAndLossId));
+        var stocksDTO = _mapper.Map<List<TradeTransactionDto>>(TradeMatcher.MatchAndCalculate(
+                                                                        await _tradeTransactionService.GetUassignedByStockIdAsync(request.StockIds, request.BuyerId), 
+                                                                        request.StartingProfitAndLossId));
 
         var ids = stocksDTO.Where(x => x.ProfitAndLossId != null).OrderBy(x => x.StockId).Select(x => x.StockId).Distinct().ToList();
 

@@ -10,10 +10,14 @@ public class StockSimulatorProfile : Profile
     public StockSimulatorProfile()
     {
         CreateMap<ProfitAndLoss, ProfitAndLossDto>()
-            .ForMember(dest => dest.StockName, opt => opt.MapFrom(src => src.TradeTransactions.First().Stock.StockName));
-            //.ForMember(dest => dest.TradeFees, opt => opt.MapFrom(src => src.TradeTransactions))
-            //.ForMember(dest => dest.Dividends, opt => opt.MapFrom(src => src.Dividends))
-            //.ForMember(dest => dest.TradeFees, opt => opt.MapFrom(src => src.TradeFees));
+            .ForMember(dest => dest.StockName, opt => opt.MapFrom(src => src.TradeTransactions.First().Stock.StockName))
+            .ForMember(dest => dest.TradeTransactions, opt => opt.MapFrom(src => src.TradeTransactions))
+            .ForMember(dest => dest.Dividends, opt => opt.MapFrom(src => src.Dividends))
+            .ForMember(dest => dest.TradeFees, opt => opt.MapFrom(src => src.TradeFees));
+        CreateMap<TradeTransaction, Dtos.ProfitAndLoss.TradeTransactionDto>();
+        CreateMap<TradeFee, Dtos.ProfitAndLoss.TradeFeeDto>();
+        CreateMap<Dividend, Dtos.ProfitAndLoss.DividendDto>();
+
         CreateMap<TradeFee, UnassignedTradeFeeDto>();
         CreateMap<Dividend, UnassignedDividendDto>();
         CreateMap<TradeTransaction, Dtos.TradeTransactionDto>();

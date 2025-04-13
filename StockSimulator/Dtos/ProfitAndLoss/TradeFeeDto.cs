@@ -5,7 +5,7 @@ namespace StockSimulator.Dtos.ProfitAndLoss;
 public class TradeFeeDto
 {
     public int Id { get; set; }
-    public required string FeeType { get; set; }
+    public int FeeTypeId { get; set; }
     public decimal Amount { get; set; }
     public required string ReferenceId { get; set; }
     public DateTime TradeDate { get; set; }

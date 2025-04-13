@@ -22,17 +22,17 @@ public class TradeTransactionService : ITradeTransactionService
             );
     }
 
-    public async Task<List<TradeTransaction>> GetByIdsAsync(List<int> stockIds)
+    public async Task<List<TradeTransaction>> GetByIdsAsync(List<int> tradetranasctionIds)
     {
-        return await _tradeTransactionRepository.GetByIdsAsync(stockIds);
+        return await _tradeTransactionRepository.GetByIdsAsync(tradetranasctionIds);
     }
-    public async Task<List<TradeTransaction>> GetByStockIdAsync(int stockId)
+    public async Task<List<TradeTransaction>> GetUassignedByStockIdAsync(List<int> stockIds, int buyerId)
     {
-        var result = await _tradeTransactionRepository.FindOneAsync(
-            predicate: x => x.StockId == stockId && x.BuyerId == 1,
+        var result = await _tradeTransactionRepository.FindAsync(
+            predicate: x => stockIds.Contains(x.StockId) && x.BuyerId == buyerId && x.ProfitAndLossId == null,
             include: query => query.Include(u => u.Stock)
         );
 
-        return result != null ? new List<TradeTransaction> { result } : new List<TradeTransaction>();
+        return result;
     }
 }

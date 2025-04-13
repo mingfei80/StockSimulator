@@ -12,7 +12,7 @@ public class ProfitAndLossDto
         get { return GrossProfit - TotalFees + TotalDividends; }
     }
     public int DaysHolding { get; set; }
-    public virtual ICollection<TradeTransactionDto>? TradeTransactions { get; set; }
-    public virtual ICollection<DividendDto>? Dividends { get; set; }
-    public virtual ICollection<TradeFeeDto>? TradeFees { get; set; }
+    public ICollection<TradeTransactionDto>? TradeTransactions { get; set; }
+    public ICollection<DividendDto>? Dividends { get; set; }
+    public ICollection<TradeFeeDto>? TradeFees { get; set; }
 }

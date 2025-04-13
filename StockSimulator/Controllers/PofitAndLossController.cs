@@ -43,18 +43,12 @@ public class PofitAndLossController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Post([FromBody] List<int> tradeTransactionIds)
     {
-        // Json Example
-        //{ 
-        //  "stockId": 6,
-        //  "tradeTransactionIds": {11, 15, 35}
-        //}
-
         if (tradeTransactionIds == null || !tradeTransactionIds.Any())
             return BadRequest("Trade Transaction Ids are required.");
 
         try
         {
-            var plDto = await _tradeAddProfitAndLossService.ProcessProfitAndLossAsync(tradeTransactionIds);
+            var plDto = _mapper.Map<ProfitAndLossDto>(await _tradeAddProfitAndLossService.ProcessProfitAndLossAsync(tradeTransactionIds));
 
             if (plDto == null)
                 return StatusCode(StatusCodes.Status500InternalServerError, "Could not calculate Profit and Loss.");
