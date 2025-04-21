@@ -1,58 +1,73 @@
-import { useEffect, useState } from 'react';
+import React from 'react';
+import { Routes, Route, Link } from 'react-router-dom';
+import { CssBaseline, Drawer, List, ListItem, ListItemText, Toolbar, AppBar, Typography, Box } from '@mui/material';
+import Home from './Pages/Home';
+import Contact from './Pages/Contact';
+import TransactionPendingMatches from './Pages/Transactions/PendingMatches';
+import TransactionReviewMatches from './Pages/Transactions/ReviewMatches';
 import './App.css';
 
-interface Forecast {
-    date: string;
-    temperatureC: number;
-    temperatureF: number;
-    summary: string;
-}
+const drawerWidth = 240;
 
-function App() {
-    const [forecasts, setForecasts] = useState<Forecast[]>();
+const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  return (
+    <Box sx={{ display: 'flex' }}>
+      <CssBaseline />
+      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+        <Toolbar>
+          <Typography variant="h6" noWrap component="div">
+            My MUI App
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <Drawer
+        variant="permanent"
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
+        }}
+      >
+        <Toolbar />
+        <Box sx={{ overflow: 'auto' }}>
+          <List>
+            <ListItem component={Link} to="/">
+              <ListItemText primary="Home" />
+            </ListItem>
+            <ListItem component={Link} to="/about">
+              <ListItemText primary="About" />
+            </ListItem>
+            <ListItem component={Link} to="/contact">
+              <ListItemText primary="Contact" />
+            </ListItem>
+            <ListItem>
+              <ListItemText primary="Transactions" />
+            </ListItem>
+            <ListItem component={Link} to="/transactions/pending-matches">
+              <ListItemText primary="Pending Matches" />
+            </ListItem>
+          </List>
+        </Box>
+      </Drawer>
+      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        <Toolbar />
+        {children}
+      </Box>
+    </Box>
+  );
+};
 
-    useEffect(() => {
-        populateWeatherData();
-    }, []);
-
-    const contents = forecasts === undefined
-        ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
-        : <table className="table table-striped" aria-labelledby="tableLabel">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Temp. (C)</th>
-                    <th>Temp. (F)</th>
-                    <th>Summary</th>
-                </tr>
-            </thead>
-            <tbody>
-                {forecasts.map(forecast =>
-                    <tr key={forecast.date}>
-                        <td>{forecast.date}</td>
-                        <td>{forecast.temperatureC}</td>
-                        <td>{forecast.temperatureF}</td>
-                        <td>{forecast.summary}</td>
-                    </tr>
-                )}
-            </tbody>
-        </table>;
-
-    return (
-        <div>
-            <h1 id="tableLabel">Weather forecast</h1>
-            <p>This component demonstrates fetching data from the server.</p>
-            {contents}
-        </div>
-    );
-
-    async function populateWeatherData() {
-        const response = await fetch('weatherforecast');
-        if (response.ok) {
-            const data = await response.json();
-            setForecasts(data);
-        }
-    }
-}
+const App: React.FC = () => {
+  return (
+    <Layout>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/transactions/pending-matches" element={<TransactionPendingMatches />} />
+        <Route path="/transactions/review-matches/:buyerId/:stockId" element={<TransactionReviewMatches />} />
+      </Routes>
+    </Layout>
+  );
+};
 
 export default App;

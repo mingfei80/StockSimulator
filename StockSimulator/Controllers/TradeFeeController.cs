@@ -1,7 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using StockSimulator.Business.Services;
-using StockSimulator.Dtos;
+using StockSimulator.Dtos.TradeTransaction.ReviewBuySellMatches;
 
 namespace StockSimulator.Controllers;
 
@@ -20,10 +20,10 @@ public class TradeFeeController : ControllerBase
         _mapper = mapper;
     }
 
-    [HttpGet("get-by-stockId", Name = "tradefee-get-by-stockId")]
-    public async Task<IActionResult> GetByStockId(int stockId)
+    [HttpGet("get-by-stockId-with-profitAndLossId", Name = "tradefee-get-by-stockId-with-profitAndLossId")]
+    public async Task<IActionResult> GetByStockIdWithProfitAndLossIdAsync(int stockId, int buyerId, int? profitAndLossId)
     {        
-        var dtos = _mapper.Map<List<UnassignedTradeFeeDto>>(await _tradeFeeService.GetByStockIdAsync(stockId));
+        var dtos = _mapper.Map<List<TradeFeeDto>>(await _tradeFeeService.GetByStockIdWithProfitAndLossIdAsync(stockId, buyerId, profitAndLossId));
 
         return Ok(dtos.OrderBy(x => x.TradeDate));
     }

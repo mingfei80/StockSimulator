@@ -34,6 +34,75 @@ public class ProfitAndLossService: IProfitAndLossService
         _unitOfWork = unitOfWork;
     }
 
+    public async Task<ProfitAndLoss> ProcessProfitAndLossAsync(List<int> tradeTransactionIds, List<int> dividendIds, List<int> tradeFeeIds)
+    {
+        using var transaction = await _unitOfWork.BeginTransactionAsync();
+
+        try
+        {
+            var trades = await _tradeTransactionRepository.GetByIdsAsync(tradeTransactionIds);
+            if (!trades.Any())
+                throw new InvalidOperationException("No trades found for the given IDs.");
+
+            if (trades.GroupBy(x => x.BuyerId).Count() > 1)
+                throw new InvalidOperationException("All trades must belong to the same buyer.");
+
+            if (trades.GroupBy(x => x.StockId).Count() > 1)
+                throw new InvalidOperationException("All trades must belong to the same stock.");
+
+            if (trades.Where(x => x.IsSold == true).Sum(x => x.Quantity) != trades.Where(x => x.IsSold == false).Sum(x => x.Quantity))
+                throw new InvalidOperationException("The total quantity of sold trades must equal the total quantity of bought trades.");
+
+            var stockId = trades.First().StockId;
+
+            // Get Dividends and Trade Fees for the stock within the date range
+            var dividends = await _dividendRepository.FindAsync(x => dividendIds.Contains(x.Id), false);
+            //await _dividendRepository.GetByIdsAsync(dividendIds);
+            var tradeFees = await _tradeFeeRepository.FindAsync(x => tradeFeeIds.Contains(x.Id), false);
+
+            // Calculate Profit and Loss
+            ProfitAndLossCalculationResult plDto = ProfitAndLossCalculator.Calculate(trades, dividends, tradeFees);
+            var pnl = new ProfitAndLoss
+            {
+                GrossProfit = plDto.GrossProfit,
+                TotalDividends = plDto.TotalDividends,
+                TotalFees = plDto.TotalFees,
+                DaysHolding = plDto.DaysHolding,
+                TradeTransactions = trades.ToList(),
+                Dividends = dividends.ToList(),
+                TradeFees = tradeFees.ToList()
+            };
+
+            await _profitAndLossRepository.AddAsync(pnl);
+
+            // Link ProfitAndLossId to each Trade, Devidend & Fees
+            foreach (var trade in trades)
+                trade.ProfitAndLossId = pnl.Id;
+
+            foreach (var dividend in dividends)
+                dividend.ProfitAndLossId = pnl.Id;
+
+            foreach (var fee in tradeFees)
+                fee.ProfitAndLossId = pnl.Id;
+
+            // Save all
+            await _tradeTransactionRepository.UpdateRangeAsync(trades);
+            await _dividendRepository.UpdateRangeAsync(dividends);
+            await _tradeFeeRepository.UpdateRangeAsync(tradeFees);
+
+            await transaction.CommitAsync();
+
+            return pnl;
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            _logger.LogError(ex, "Error occurred in {Method} with TradeTransactionIds: {Ids}",
+                nameof(ProcessProfitAndLossAsync), tradeTransactionIds);
+            throw;
+        }
+    }
+
     public async Task<ProfitAndLoss> ProcessProfitAndLossAsync(List<int> tradeTransactionIds)
     {
         using var transaction = await _unitOfWork.BeginTransactionAsync();

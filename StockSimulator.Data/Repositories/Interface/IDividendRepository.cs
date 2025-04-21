@@ -6,4 +6,5 @@ namespace StockSimulator.Data.Repositories;
 public interface IDividendRepository : IRepository<Dividend>
 {
     Task<List<Dividend>> GetByStockAndDateRangeAsync(int stockId, DateTime minDate, DateTime maxDate);
+    Task<List<Dividend>> GetByIdsAsync(List<int> ids);
 }

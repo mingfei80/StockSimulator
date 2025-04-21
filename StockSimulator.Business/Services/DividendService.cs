@@ -12,13 +12,13 @@ public class DividendService : IDividendService
         _dividendRepository = dividendRepository;
     }
 
-    public async Task<List<Dividend>> GetByStockIdAsync(int stockId)
+    public async Task<List<Dividend>> GetByStockIdWithProfitAndLossIdAsync(int stockId, int buyerId, int? profitAndLossId)
     {
-        var result = await _dividendRepository.FindOneAsync(
-            predicate: x => x.StockId == stockId && x.BuyerId == 1,
+        var result = await _dividendRepository.FindAsync(
+            predicate: x => x.StockId == stockId && x.BuyerId == 1 && x.ProfitAndLossId == profitAndLossId,
             include: query => query.Include(u => u.Stock)
         );
 
-        return result != null ? new List<Dividend> { result } : new List<Dividend>();
+        return result;
     }
 }

@@ -27,6 +27,17 @@ namespace StockSimulator
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            // Add CORS
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowLocalhost50264", policy =>
+                {
+                    policy.WithOrigins("https://localhost:50264") // <-- your frontend port
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+            });
+
             var app = builder.Build();
 
             app.UseDefaultFiles();
@@ -40,6 +51,8 @@ namespace StockSimulator
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors("AllowLocalhost50264"); // Apply the policy here
 
             app.UseAuthorization();
 

@@ -20,4 +20,12 @@ public class DividendRepository : Repository<Dividend>, IDividendRepository
 
         return dividends;
     }
+    public async Task<List<Dividend>> GetByIdsAsync(List<int> ids)
+    {
+        var trades = await _context.Dividends
+            .Where(x => ids.Contains(x.Id))
+            .ToListAsync();
+
+        return trades;
+    }
 }

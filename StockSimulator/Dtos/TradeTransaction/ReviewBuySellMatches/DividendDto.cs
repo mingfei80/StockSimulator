@@ -1,6 +1,6 @@
-﻿namespace StockSimulator.Dtos;
+﻿namespace StockSimulator.Dtos.TradeTransaction.ReviewBuySellMatches;
 
-public class UnassignedDividendDto
+public class DividendDto
 {
     public int Id { get; set; }
     public decimal Amount { get; set; }

@@ -3,7 +3,7 @@
 namespace StockSimulator.Business.Logic;
 public static class TradeMatcher
 {
-    public static List<TradeTransaction> MatchAndCalculate(List<TradeTransaction> trades, int startProfitId)
+    public static List<TradeTransaction> MatchAndCalculate(List<TradeTransaction> trades, int startProfitId = 1)
     {
         int currentGroupId = startProfitId;
 

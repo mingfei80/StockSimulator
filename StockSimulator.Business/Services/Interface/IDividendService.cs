@@ -4,5 +4,5 @@ namespace StockSimulator.Business.Services;
 
 public interface IDividendService
 {
-    Task<List<Dividend>> GetByStockIdAsync(int stockId);
+    Task<List<Dividend>> GetByStockIdWithProfitAndLossIdAsync(int stockId, int buyerId, int? profitAndLossId);
 }

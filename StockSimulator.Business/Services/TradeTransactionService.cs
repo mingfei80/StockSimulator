@@ -21,15 +21,20 @@ public class TradeTransactionService : ITradeTransactionService
                           .Include(w => w.Buyer)
             );
     }
-
-    public async Task<List<TradeTransaction>> GetByIdsAsync(List<int> tradetranasctionIds)
-    {
-        return await _tradeTransactionRepository.GetByIdsAsync(tradetranasctionIds);
-    }
-    public async Task<List<TradeTransaction>> GetUassignedByStockIdAsync(List<int> stockIds, int buyerId)
+    public async Task<List<TradeTransaction>> GetStockUnassignedBuySellMatchesAsync(int buyerId)
     {
         var result = await _tradeTransactionRepository.FindAsync(
-            predicate: x => stockIds.Contains(x.StockId) && x.BuyerId == buyerId && x.ProfitAndLossId == null,
+            predicate: x => x.BuyerId == buyerId && x.ProfitAndLossId == null,
+            include: query => query.Include(u => u.Stock)
+        );
+
+        return result;
+    }
+
+    public async Task<List<TradeTransaction>> GetByStockIdWithProfitAndLossIdAsync(int stockId, int buyerId, int? profitAndLossId)
+    {
+        var result = await _tradeTransactionRepository.FindAsync(
+            predicate: x => x.StockId == stockId && x.BuyerId == buyerId && x.ProfitAndLossId == profitAndLossId,
             include: query => query.Include(u => u.Stock)
         );
 
