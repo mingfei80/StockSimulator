@@ -17,11 +17,13 @@ public static class DependencyInjectionConfig
         service.AddScoped<ITradeTransactionRepository, TradeTransactionRepository>();
         service.AddScoped<IDividendRepository, DividendRepository>();
         service.AddScoped<ITradeFeeRepository, TradeFeeRepository>();
+        service.AddScoped<IStockAnalyticsRepository, StockAnalyticsRepository>();
 
         service.AddScoped<IProfitAndLossService, ProfitAndLossService>();
         service.AddScoped<ITradeTransactionService, TradeTransactionService>();
         service.AddScoped<IDividendService, DividendService>();
         service.AddScoped<ITradeFeeService, TradeFeeService>();
+        service.AddScoped<IStockAnalyticsService, StockAnalyticsService>();
 
         return service;
     }

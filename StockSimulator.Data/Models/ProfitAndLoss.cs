@@ -6,6 +6,9 @@ public class ProfitAndLoss
     public decimal GrossProfit { get; set; }
     public decimal TotalFees { get; set; }
     public decimal TotalDividends { get; set; }
+    public int StockId { get; set; }
+    public DateOnly FirstTradeDate { get; set; }
+    public DateOnly LastTradeDate { get; set; }
     public decimal NetProfit
     {
         get { return GrossProfit - TotalFees + TotalDividends; }

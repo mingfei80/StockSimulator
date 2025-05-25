@@ -6,6 +6,7 @@ public static class ProfitAndLossCalculator
 {
     public static ProfitAndLossCalculationResult Calculate(IEnumerable<TradeTransaction> trades, IEnumerable<Dividend> dividends, IEnumerable<TradeFee> fees)
     {
+        var agentId = trades.Where(t => t.IsSold).Select(a => a.AgentId).FirstOrDefault();
         var totalBuy = trades.Where(t => !t.IsSold).Sum(t => t.TransactionAmount);
         var totalSell = trades.Where(t => t.IsSold).Sum(t => t.TransactionAmount);
         var totalFee = fees.Sum(f => f.Amount);
@@ -15,7 +16,7 @@ public static class ProfitAndLossCalculator
 
         return new ProfitAndLossCalculationResult
         {
-            GrossProfit = totalSell - totalBuy,
+            GrossProfit = agentId == 1 ? totalSell - totalBuy + totalFee: totalSell - totalBuy, //because we used the total already included the fees
             TotalFees = totalFee,
             TotalDividends = totalDividends,
             DaysHolding = (maxDate - minDate).Days

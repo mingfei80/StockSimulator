@@ -5,6 +5,9 @@ import Home from './Pages/Home';
 import Contact from './Pages/Contact';
 import TransactionPendingMatches from './Pages/Transactions/PendingMatches';
 import TransactionReviewMatches from './Pages/Transactions/ReviewMatches';
+import BySnapshotStockPriceGroupId from './Pages/Analytics/BySnapshotStockPriceGroupId';
+import BySnapshotSummaryPriceGroupId from './Pages/Analytics/BySnapshotSummaryPriceGroupId';
+import ContactMe from './Pages/Analytics/ContactMe';
 import './App.css';
 
 const drawerWidth = 240;
@@ -46,6 +49,15 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             <ListItem component={Link} to="/transactions/pending-matches">
               <ListItemText primary="Pending Matches" />
             </ListItem>
+            <ListItem>
+              <ListItemText primary="Analytics" />
+            </ListItem>
+            <ListItem component={Link} to="/analytics/by-snapshot-stock-price-group-id/1">
+              <ListItemText primary="Vs Snapshot" />
+            </ListItem>
+            <ListItem component={Link} to="/analytics/by-snapshot-summary-price-group-id/1">
+              <ListItemText primary="Summary Snapshot" />
+            </ListItem>
           </List>
         </Box>
       </Drawer>
@@ -65,6 +77,9 @@ const App: React.FC = () => {
         <Route path="/contact" element={<Contact />} />
         <Route path="/transactions/pending-matches" element={<TransactionPendingMatches />} />
         <Route path="/transactions/review-matches/:buyerId/:stockId" element={<TransactionReviewMatches />} />
+        <Route path="/analytics/contact-me" element={<ContactMe />} />
+        <Route path="/analytics/by-snapshot-stock-price-group-id/:priceGroupId" element={<BySnapshotStockPriceGroupId />} />
+        <Route path="/analytics/by-snapshot-summary-price-group-id/:priceGroupId" element={<BySnapshotSummaryPriceGroupId />} />
       </Routes>
     </Layout>
   );
