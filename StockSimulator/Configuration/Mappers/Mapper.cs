@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using StockSimulator.Data.Models;
+using StockSimulator.Data.Models.Projection;
 using StockSimulator.Dtos.ProfitAndLoss;
 
 namespace StockSimulator.Configuration.Mappers;
@@ -26,6 +27,10 @@ public class StockSimulatorProfile : Profile
 
         CreateMap<TradeTransaction, Dtos.TradeTransaction.UnassignedBuySellMatches.TradeTransactionDto>()
             .ForMember(dest => dest.StockName, opt => opt.MapFrom(src => src.Stock.StockName));
+
+
+        CreateMap<StockProfitAndLossData, Dtos.ProfitAndLoss.StockProfitAndLossDataDto>();
+
         ///.ForMember(dest => dest.Stock, opt => opt.MapFrom(src => src.Stock));
     }
 }

@@ -60,6 +60,7 @@ public class ProfitAndLossService: IProfitAndLossService
             //await _dividendRepository.GetByIdsAsync(dividendIds);
             var tradeFees = await _tradeFeeRepository.FindAsync(x => tradeFeeIds.Contains(x.Id), false);
 
+
             // Calculate Profit and Loss
             ProfitAndLossCalculationResult plDto = ProfitAndLossCalculator.Calculate(trades, dividends, tradeFees);
             var pnl = new ProfitAndLoss
@@ -70,7 +71,10 @@ public class ProfitAndLossService: IProfitAndLossService
                 DaysHolding = plDto.DaysHolding,
                 TradeTransactions = trades.ToList(),
                 Dividends = dividends.ToList(),
-                TradeFees = tradeFees.ToList()
+                TradeFees = tradeFees.ToList(),
+                StockId = stockId,
+                FirstTradeDate = DateOnly.FromDateTime(trades.Min(t => t.TradeDate)),
+                LastTradeDate = DateOnly.FromDateTime(trades.Max(t => t.TradeDate))
             };
 
             await _profitAndLossRepository.AddAsync(pnl);

@@ -14,6 +14,8 @@ public class StockSimulatorDbContext : DbContext
     public DbSet<Stock> Stocks { get; set; }
     public DbSet<Buyer> Buyers { get; set; }
     public DbSet<Agent> Agents { get; set; }
+    public DbSet<SnapshotStockPrice> SnapshotStockPrices { get; set; }
+    public DbSet<SnapshotStockPriceGroup> SnapshotStockPriceGroups { get; set; }
 
     public StockSimulatorDbContext(DbContextOptions<StockSimulatorDbContext> options)
         : base(options)

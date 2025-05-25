@@ -10,4 +10,5 @@ public class Stock
     public virtual ICollection<TradeTransaction>? TradeTransactions { get; set; }
     public virtual ICollection<Dividend>? Dividends { get; set; }
     public virtual ICollection<TradeFee>? TradeFees { get; set; }
+    public virtual ICollection<SnapshotStockPrice>? SnapshotStockPrices { get; set; }
 }
