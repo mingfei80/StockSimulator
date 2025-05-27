@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StockSimulator.Data.Context;
+using StockSimulator.Data.Models;
 using StockSimulator.Data.Models.Projection;
 
 namespace StockSimulator.Data.Repositories;
@@ -12,7 +13,7 @@ public class StockAnalyticsRepository : IStockAnalyticsRepository
         _context = context;
     }
 
-    public async Task<List<StockProfitAndLossData>> GetStockProfitAndLossAsync()
+    public async Task<List<StockProfitAndLossData>> GetStockProfitAndLossAsync(int snapshotStockPriceGroupId)
     {
         var transactions = await _context.TradeTransactions
             .Include(t => t.Stock)
@@ -21,7 +22,7 @@ public class StockAnalyticsRepository : IStockAnalyticsRepository
 
         var dividends = await _context.Dividends.ToListAsync();
         var fees = await _context.TradeFees.ToListAsync();
-        var prices = await _context.SnapshotStockPrices.ToDictionaryAsync(p => p.StockId, p => p.LocalUnitCost);
+        var prices = await _context.SnapshotStockPrices.Where(x => x.SnapshotStockPriceGroupId == snapshotStockPriceGroupId).ToDictionaryAsync(p => p.StockId, p => p.LocalUnitCost);
 
         var grouped = transactions
             .GroupBy(t => t.StockId)

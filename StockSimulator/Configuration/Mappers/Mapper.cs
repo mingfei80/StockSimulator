@@ -29,7 +29,16 @@ public class StockSimulatorProfile : Profile
             .ForMember(dest => dest.StockName, opt => opt.MapFrom(src => src.Stock.StockName));
 
 
-        CreateMap<StockProfitAndLossData, Dtos.ProfitAndLoss.StockProfitAndLossDataDto>();
+        CreateMap<StockProfitAndLossData, StockProfitAndLossDataDto>()
+            .ForMember(dest => dest.SellTransactions, opt => opt.MapFrom(src => src.SellTransactions))
+            .ForMember(dest => dest.BuyTransactions, opt => opt.MapFrom(src => src.BuyTransactions))
+            .ForMember(dest => dest.Fees, opt => opt.MapFrom(src => src.Fees))
+            .ForMember(dest => dest.Dividends, opt => opt.MapFrom(src => src.Dividends));
+        CreateMap<StockProfitAndLossSummaryResult, StockProfitAndLossSummaryDto>()
+            .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items))
+            .ForMember(dest => dest.GrandTotalGrossProfit, opt => opt.MapFrom(src => src.GrandTotalGrossProfit))
+            .ForMember(dest => dest.GrandTotalDividends, opt => opt.MapFrom(src => src.GrandTotalDividends))
+            .ForMember(dest => dest.GrandTotalFees, opt => opt.MapFrom(src => src.GrandTotalFees));
 
         ///.ForMember(dest => dest.Stock, opt => opt.MapFrom(src => src.Stock));
     }

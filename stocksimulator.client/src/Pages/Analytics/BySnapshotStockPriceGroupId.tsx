@@ -14,7 +14,6 @@ import {
   TableRow,
 } from '@mui/material';
 import { MdExpandMore } from 'react-icons/md';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import axios from 'axios';
 import { BASE_URL } from '../../config';
 import { useParams } from 'react-router-dom';
@@ -40,7 +39,13 @@ interface TradeTransactionDto {
     amount: number;
     tradeDate: string;
   }
-  
+interface StockProfitAndLossSummaryDto {
+    grandTotalGrossProfit: number;
+    grandTotalDividends: number;
+    grandTotalFees: number;
+    items: StockProfitAndLossDataDto[];
+}
+
   interface StockProfitAndLossDataDto {
     stockId: number;
     stockName: string;
@@ -53,28 +58,26 @@ interface TradeTransactionDto {
     sellTransactions: TradeTransactionDto[];
     dividends: DividendDto[];
     fees: TradeFeeDto[];
-  }
-  
-  const columns: GridColDef[] = [
-    { field: 'stockId', headerName: 'Stock ID', width: 100 },
-    { field: 'stockName', headerName: 'Stock Name', width: 220 },
-    { field: 'quantityHeld', headerName: 'Qty Held', width: 120 },
-    { field: 'currentPrice', headerName: 'Current Price', width: 140 },
-    { field: 'grossProfit', headerName: 'Gross Profit', width: 140 },
-    { field: 'totalDividends', headerName: 'Dividends', width: 120 },
-    { field: 'totalFees', headerName: 'Fees', width: 100 },
-  ];
+  }  
 
 const BySnapshotStockPriceGroupId: React.FC = () => 
 {
     const { priceGroupId } = useParams<{ priceGroupId: string }>();
-    const [data, setData] = useState<StockProfitAndLossDataDto[]>([]);
+    const [data, setData] = useState<StockProfitAndLossSummaryDto | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        axios.get<StockProfitAndLossDataDto[]>(`${BASE_URL}/StockAnalytics/get-by-snapshotStockPriceGroupId?snapshotStockPriceGroupId=${priceGroupId}`)
+        setError(null); // reset error on new request
+        axios
+            .get<StockProfitAndLossSummaryDto>(`${BASE_URL}/StockAnalytics/get-by-snapshotStockPriceGroupId?snapshotStockPriceGroupId=${priceGroupId}`)
             .then(res => setData(res.data))
-            .catch(err => console.error(err));
-    }, []);
+            .catch(err => {
+                console.error(err); // Log the error for debugging
+                setError("Failed to load data. Please try again.");
+                setData(null);
+            });
+    }, [priceGroupId]);
+
 
     const renderTransactions = (transactions: TradeTransactionDto[], type: string) => (
         <Accordion>
@@ -142,28 +145,38 @@ const BySnapshotStockPriceGroupId: React.FC = () =>
         </Accordion>
       );
     
-      return (
+    return (
         <Box sx={{ p: 3 }}>
-          <Typography variant="h4" gutterBottom>Stock Profit & Loss Summary</Typography>
-          {data.map((stock) => (
-            <Box key={stock.stockId} sx={{ mb: 3 }}>
-              <Paper elevation={2} sx={{ p: 2 }}>
-                <Typography variant="h6">{stock.stockName}</Typography>
-                <Typography>Quantity Held: {stock.quantityHeld}</Typography>
-                <Typography>Current Price: {stock.currentPrice}</Typography>
-                <Typography>Gross Profit: {stock.grossProfit}</Typography>
-                <Typography>Total Dividends: {stock.totalDividends}</Typography>
-                <Typography>Total Fees: {stock.totalFees}</Typography>
-    
-                {renderTransactions(stock.buyTransactions, 'Buy')}
-                {renderTransactions(stock.sellTransactions, 'Sell')}
-                {renderExtras(stock.dividends, 'Dividends')}
-                {renderExtras(stock.fees, 'Fees')}
-              </Paper>
-            </Box>
-          ))}
+            <Typography variant="h4" gutterBottom>Stock Profit & Loss Summary</Typography>
+            {error && (
+                <Typography color="error" sx={{ mb: 2 }}>{error}</Typography>
+            )}
+            {data && (
+                <Box sx={{ mb: 2 }}>
+                    <Typography variant="subtitle1">Grand Total Gross Profit: {data.grandTotalGrossProfit}</Typography>
+                    <Typography variant="subtitle1">Grand Total Dividends: {data.grandTotalDividends}</Typography>
+                    <Typography variant="subtitle1">Grand Total Fees: {data.grandTotalFees}</Typography>
+                </Box>
+            )}
+            {data && data.items.map((stock) => (
+                <Box key={stock.stockId} sx={{ mb: 3 }}>
+                    <Paper elevation={2} sx={{ p: 2 }}>
+                        <Typography variant="h6">{stock.stockName}</Typography>
+                        <Typography>Quantity Held: {stock.quantityHeld}</Typography>
+                        <Typography>Current Price: {stock.currentPrice}</Typography>
+                        <Typography>Gross Profit: {stock.grossProfit}</Typography>
+                        <Typography>Total Dividends: {stock.totalDividends}</Typography>
+                        <Typography>Total Fees: {stock.totalFees}</Typography>
+                        {renderTransactions(stock.buyTransactions, 'Buy')}
+                        {renderTransactions(stock.sellTransactions, 'Sell')}
+                        {renderExtras(stock.dividends, 'Dividends')}
+                        {renderExtras(stock.fees, 'Fees')}
+                    </Paper>
+                </Box>
+            ))}
         </Box>
-      );
+    );
+
 };
 
 export default BySnapshotStockPriceGroupId;

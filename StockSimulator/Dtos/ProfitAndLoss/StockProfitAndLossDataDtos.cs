@@ -1,6 +1,4 @@
-﻿using StockSimulator.Data.Models;
-
-namespace StockSimulator.Dtos.ProfitAndLoss;
+﻿namespace StockSimulator.Dtos.ProfitAndLoss;
 
 public class StockProfitAndLossDataDto
 {

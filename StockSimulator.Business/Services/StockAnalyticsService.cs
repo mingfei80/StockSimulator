@@ -1,5 +1,4 @@
-﻿using StockSimulator.Data.Models.Projection;
-using StockSimulator.Data.Repositories;
+﻿using StockSimulator.Data.Repositories;
 
 namespace StockSimulator.Business.Services;
 
@@ -11,10 +10,18 @@ public class StockAnalyticsService : IStockAnalyticsService
         _stockAnalyticsRepository = stockAnalyticsRepository;
     }
 
-    public async Task<List<StockProfitAndLossData>> GetDataBySnapshotStockPriceGroupIdAsync(int snapshotStockPriceGroup)
+    public async Task<StockProfitAndLossSummaryResult> GetDataBySnapshotStockPriceGroupIdAsync(int snapshotStockPriceGroup)
     {
-        var result = await _stockAnalyticsRepository.GetStockProfitAndLossAsync();
+        var stockProfitAndLossData = await _stockAnalyticsRepository.GetStockProfitAndLossAsync(snapshotStockPriceGroup);
 
-        return result;
+        var items = stockProfitAndLossData.ToList();
+
+        return new StockProfitAndLossSummaryResult
+        {
+            Items = items,
+            GrandTotalGrossProfit = Math.Round(items.Sum(x => x.GrossProfit), 2),
+            GrandTotalDividends = Math.Round(items.Sum(x => x.TotalDividends), 2),
+            GrandTotalFees = Math.Round(items.Sum(x => x.TotalFees), 2)
+        };
     }
 }
