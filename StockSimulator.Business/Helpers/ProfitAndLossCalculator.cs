@@ -16,7 +16,7 @@ public static class ProfitAndLossCalculator
 
         return new ProfitAndLossCalculationResult
         {
-            GrossProfit = agentId == 1 ? totalSell - totalBuy + totalFee: totalSell - totalBuy, //because we used the total already included the fees
+            GrossProfit = totalSell - totalBuy,
             TotalFees = totalFee,
             TotalDividends = totalDividends,
             DaysHolding = (maxDate - minDate).Days
